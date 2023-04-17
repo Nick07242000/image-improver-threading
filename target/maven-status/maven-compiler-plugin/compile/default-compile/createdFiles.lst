@@ -1,1 +1,5 @@
+org\nnf\ii\model\enums\Size.class
+org\nnf\ii\model\enums\Status.class
+org\nnf\ii\model\enums\Resolution.class
+org\nnf\ii\model\Image.class
 org\nnf\ii\Main.class
