@@ -12,6 +12,6 @@ public class Image {
     private String url;
     private Size size;
     private Resolution resolution;
-    private Integer improvements;
+    private Integer improvements; //synchronized
     private Status status;
 }
