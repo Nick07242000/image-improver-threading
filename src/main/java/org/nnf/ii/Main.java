@@ -13,7 +13,6 @@ import static org.nnf.ii.model.enums.Status.READY;
 
 public class Main {
 
-
     public static void main(String[] args) {
 
         List<Image> images = new ArrayList<>();
