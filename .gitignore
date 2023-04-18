@@ -5,6 +5,7 @@
 *.iws
 *.iml
 *.ipr
+*.log
 
 # User-specific stuff
 .idea/**/workspace.xml
