@@ -19,6 +19,6 @@ public class Main {
         images.forEach(i -> logger.info(i.getUrl()));
 
         Stack<Image> startContainer = new Stack<>();
-
+//hola
     }
 }
