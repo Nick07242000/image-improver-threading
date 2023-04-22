@@ -30,16 +30,16 @@ public class Extractor implements Runnable {
     }
 
     private void extract() {
-        Image image;
         int n = getRandomNumber(0, source.size());
-        log.info(format("Extracting image %d from source",n));
-        synchronized (destination) {
-            image = source.get(n);
-        }
+        Image image = source.get(n);
 
-        if (!destination.isPresent(image)) {
-            log.info(format("Image %d not present in source - adding",n));
-            destination.add(image);
+        log.info(format("Extracting image %d from source",n));
+
+        synchronized (destination) {
+            if (!destination.isPresent(image)) {
+                log.info(format("Image %d not present in source - adding",n));
+                destination.add(image);
+            }
         }
     }
 }
