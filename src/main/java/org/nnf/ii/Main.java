@@ -14,11 +14,7 @@ public class Main {
 
         Logger logger = Logger.getLogger(Main.class);
 
-        List<Image> images = findAll();
-
-        images.forEach(i -> logger.info(i.getUrl()));
-
-        Stack<Image> startContainer = new Stack<>();
+        List<Image> images = findAll(500);
 
     }
 }
