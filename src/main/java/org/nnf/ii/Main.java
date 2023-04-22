@@ -7,6 +7,7 @@ import org.nnf.ii.service.brightener.Brightener;
 import org.nnf.ii.service.extractor.Extractor;
 import org.nnf.ii.service.persister.Persister;
 import org.nnf.ii.service.resizer.Resizer;
+import org.nnf.ii.service.semaphore.Queue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,10 +31,11 @@ public class Main {
         Extractor extractor = Extractor.builder().source(images).destination(initialContainer).key(new Object()).build();
         startThreads(extractor,2);
 
-        Brightener brightener = Brightener.builder().container(initialContainer).key(new Object()).build();
+        Queue queue = new Queue();
+        Brightener brightener = Brightener.builder().container(initialContainer).queue(queue).build();
         startThreads(brightener,3);
 
-        Resizer resizer = Resizer.builder().container(initialContainer).key(new Object()).build();
+        Resizer resizer = Resizer.builder().container(initialContainer).key(new Object()).queue(queue).build();
         startThreads(resizer,3);
 
         Persister persister = Persister.builder().container(initialContainer).finalContainer(finalContainer).key(new Object()).build();
