@@ -21,6 +21,8 @@ public class Extractor implements Runnable {
     private final List<Image> source;
     private final Container destination;
 
+    private final Object key;
+
     @Override
     public void run() {
         log.info(format("Extractor Running - %s",currentThread().getName()));
@@ -35,13 +37,15 @@ public class Extractor implements Runnable {
         Image image;
         int n = getRandomNumber(0, source.size());
         log.info(format("Extracting image %d from source",n));
-        synchronized (destination) {
-            image = source.get(n);
+        image = source.get(n);
+
+        synchronized (key) {
+            if (!destination.isPresent(image)) {
+                log.info(format("Image %d not present in source - adding",n));
+                destination.add(image);
+            }
         }
 
-        if (!destination.isPresent(image)) {
-            log.info(format("Image %d not present in source - adding",n));
-            destination.add(image);
-        }
+
     }
 }

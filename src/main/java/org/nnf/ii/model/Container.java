@@ -20,9 +20,13 @@ public class Container {
             images.add(image);
         }
     }
-
+    public void remove(Image image){
+        if (this.isPresent(image)){
+            images.remove(image);
+        }
+    }
     public Image getRandom() {
-        return images.get(getRandomNumber(0, images.size()));
+        return images.get(getRandomNumber(0, images.size())) ;
     }
 
     public int getAmountPresent() {
@@ -32,6 +36,7 @@ public class Container {
     public boolean hasCapacity() {
         return images.size() < size;
     }
+    public boolean isEmpty(){return images.isEmpty();}
 
     public boolean isPresent(Image image) {
         return images.contains(image);
