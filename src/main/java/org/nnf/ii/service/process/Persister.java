@@ -1,4 +1,4 @@
-package org.nnf.ii.service;
+package org.nnf.ii.service.process;
 
 public class Persister implements Runnable {
     @Override
