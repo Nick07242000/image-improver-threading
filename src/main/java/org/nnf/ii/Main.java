@@ -3,7 +3,9 @@ package org.nnf.ii;
 import org.apache.log4j.Logger;
 import org.nnf.ii.model.Container;
 import org.nnf.ii.model.Image;
-import org.nnf.ii.service.Extractor;
+import org.nnf.ii.service.process.Brightener;
+import org.nnf.ii.service.process.Extractor;
+import org.nnf.ii.service.semaphore.Queue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +26,12 @@ public class Main {
         Container initialContainer = Container.builder().size(100).images(new ArrayList<>()).build();
 
         Extractor extractor = Extractor.builder().source(images).destination(initialContainer).build();
-
         startThreads(extractor,2);
+
+        Queue queue = new Queue();
+
+        Brightener brightener = Brightener.builder().container(initialContainer).queue(queue).build();
+        startThreads(brightener, 3);
+
     }
 }

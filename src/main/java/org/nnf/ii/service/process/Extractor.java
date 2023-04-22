@@ -1,4 +1,4 @@
-package org.nnf.ii.service;
+package org.nnf.ii.service.process;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -35,7 +35,7 @@ public class Extractor implements Runnable {
 
         log.info(format("Extracting image %d from source",n));
 
-        synchronized (destination) {
+        synchronized (this) {
             if (!destination.isPresent(image)) {
                 log.info(format("Image %d not present in source - adding",n));
                 destination.add(image);

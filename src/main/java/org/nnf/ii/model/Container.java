@@ -21,6 +21,10 @@ public class Container {
         }
     }
 
+    public void delete(Image image){
+        images.remove(image);
+    }
+
     public Image getRandom() {
         return images.get(getRandomNumber(0, images.size()));
     }
@@ -36,4 +40,8 @@ public class Container {
     public boolean isPresent(Image image) {
         return images.contains(image);
     }
+
+    public boolean isEmpty() {
+        return images.isEmpty();
+    };
 }
