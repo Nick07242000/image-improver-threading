@@ -1,9 +1,7 @@
-package org.nnf.ii.service.extractor;
+package org.nnf.ii.service;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import org.apache.log4j.Logger;
 import org.nnf.ii.model.Container;
 import org.nnf.ii.model.Image;

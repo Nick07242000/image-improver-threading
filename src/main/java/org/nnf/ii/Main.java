@@ -3,7 +3,7 @@ package org.nnf.ii;
 import org.apache.log4j.Logger;
 import org.nnf.ii.model.Container;
 import org.nnf.ii.model.Image;
-import org.nnf.ii.service.extractor.Extractor;
+import org.nnf.ii.service.Extractor;
 
 import java.util.ArrayList;
 import java.util.List;
