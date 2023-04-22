@@ -8,6 +8,7 @@ import org.nnf.ii.service.extractor.Extractor;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.lang.String.format;
 import static org.nnf.ii.repository.ImageRepository.findAll;
 import static org.nnf.ii.util.ThreadFactory.startThreads;
 
@@ -25,7 +26,5 @@ public class Main {
         Extractor extractor = Extractor.builder().source(images).destination(initialContainer).build();
 
         startThreads(extractor,2);
-
-        log.info("Finished!");
     }
 }

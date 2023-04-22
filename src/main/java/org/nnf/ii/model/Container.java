@@ -6,6 +6,8 @@ import lombok.Setter;
 
 import java.util.List;
 
+import static org.nnf.ii.util.Util.getRandomNumber;
+
 @Getter
 @Setter
 @Builder
@@ -14,13 +16,21 @@ public class Container {
     private List<Image> images;
 
     public void add(Image image) {
-        if (!this.isFull()) {
+        if (this.hasCapacity()) {
             images.add(image);
         }
     }
 
-    public boolean isFull() {
-        return images.size() == size;
+    public Image getRandom() {
+        return images.get(getRandomNumber(0, images.size()));
+    }
+
+    public int getAmountPresent() {
+        return images.size();
+    }
+
+    public boolean hasCapacity() {
+        return images.size() < size;
     }
 
     public boolean isPresent(Image image) {

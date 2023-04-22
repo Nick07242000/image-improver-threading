@@ -24,19 +24,21 @@ public class Extractor implements Runnable {
     @Override
     public void run() {
         log.info(format("Extractor Running - %s",currentThread().getName()));
-        while (!destination.isFull()) {
+        while (destination.hasCapacity()) {
             extract();
         }
         log.info(format("Extractor Finished - %s",currentThread().getName()));
+        log.info(format("Container has %d images",destination.getAmountPresent()));
     }
 
     private void extract() {
         Image image;
-        int n = getRandomNumber(0, destination.getSize());
-        log.info(format("Extracting %d image from source",n));
+        int n = getRandomNumber(0, source.size());
+        log.info(format("Extracting image %d from source",n));
         synchronized (destination) {
             image = source.get(n);
         }
+
         if (!destination.isPresent(image)) {
             log.info(format("Image %d not present in source - adding",n));
             destination.add(image);
