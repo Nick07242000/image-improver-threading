@@ -13,10 +13,10 @@ import static org.nnf.ii.model.enums.Status.READY;
 public final class ImageRepository {
     private ImageRepository() {}
 
-    public static List<Image> findAll() {
+    public static List<Image> findAll(int amount) {
         List<Image> images = new ArrayList<>();
 
-        while (images.size() != 100) {
+        while (images.size() != amount) {
             images.add(new Image(
                     "https://s3.amazonaws.com/bucket/name-not-found/" + UUID.randomUUID(),
                     SMALL,
