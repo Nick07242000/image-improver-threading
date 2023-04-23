@@ -12,9 +12,10 @@ import java.util.concurrent.CountDownLatch;
 import static java.lang.String.format;
 import static java.lang.Thread.currentThread;
 import static org.nnf.ii.model.enums.Size.MEDIUM;
-import static org.nnf.ii.model.enums.Status.*;
-import static org.nnf.ii.util.Util.waitFor;
+import static org.nnf.ii.model.enums.Status.FINISHED;
+import static org.nnf.ii.model.enums.Status.READY;
 import static org.nnf.ii.util.Util.delay;
+import static org.nnf.ii.util.Util.waitFor;
 
 @Builder
 public class Persister implements Runnable {
