@@ -13,11 +13,10 @@ import java.util.List;
 
 import static java.lang.String.format;
 import static java.lang.Thread.currentThread;
-import static java.lang.Thread.sleep;
 import static org.nnf.ii.model.enums.Resolution.*;
 import static org.nnf.ii.model.enums.Status.IN_PROGRESS;
 import static org.nnf.ii.model.enums.Status.READY;
-import static org.nnf.ii.util.Util.getRandomNumber;
+import static org.nnf.ii.util.Util.delay;
 
 @Getter
 @Builder
@@ -29,35 +28,34 @@ public class Brightener implements Runnable {
     @Override
     public void run() {
         log.debug(format("Brightener Running - %s",currentThread().getName()));
-        brighten();
+        brightenCollection();
         log.debug(format("Brightener Finished - %s",currentThread().getName()));
     }
 
-    private void brighten() {
+    private void brightenCollection() {
         List<Image> accessed = new ArrayList<>();
 
         while (accessed.size() < container.getSize()) {
             Image image = getImage(accessed);
+            accessed.add(image);
+
             log.debug(format("Brightening image %s in %s", image.getUrl(), currentThread().getName()));
-            try {
-                sleep(getRandomNumber(0,100));
-            } catch (InterruptedException e){
-                e.printStackTrace();
-            }
+
+            delay(100);
+
             brighten(image);
             improve(image);
-            accessed.add(image);
-            setStatusReady(image);
+            image.setStatus(READY);
         }
     }
 
     @Synchronized
-    private Image getImage(List<Image> accessedList) {
+    private Image getImage(List<Image> accessed) {
         Image image;
         do {
             image = queue.getImage(container);
         }
-        while (image.getStatus()!=READY || accessedList.contains(image));
+        while (image.getStatus()!=READY || accessed.contains(image));
         image.setStatus(IN_PROGRESS);
         return image;
     }
@@ -72,9 +70,5 @@ public class Brightener implements Runnable {
 
     private void improve(Image image) {
         image.setImprovements(image.getImprovements() + 1);
-    }
-
-    private void setStatusReady(Image image) {
-        image.setStatus(READY);
     }
 }
