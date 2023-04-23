@@ -29,6 +29,7 @@ public class Queue {
     public void deleteImage(Container container, Image image) {
         waitForAccess();
         container.delete(image);
+        semaphore.release();
     }
 
     private void waitForAccess() {

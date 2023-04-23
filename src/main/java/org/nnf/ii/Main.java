@@ -21,7 +21,7 @@ public class Main {
     public static void main(String[] args) {
         Logger log = Logger.getLogger(Main.class);
 
-        log.debug("Starting...");
+        log.info("Starting...");
 
         List<Image> images = findAll(500);
 

@@ -21,12 +21,22 @@ public class Inspector implements Runnable {
             delay(500);
         }
         log();
+        log.info("Finished!");
     }
 
     private void log() {
         log.info(format("There are %d images in the initial container", source.getAmountPresent()));
-        log.info(format("%d images have been improved", source.getImages().stream().filter(i -> i.getImprovements() == 3).count()));
-        log.info(format("%d images have been resized", source.getImagesOfSize(MEDIUM).size()));
+        log.info(format("%d images have been improved", getImprovedImages()));
+        log.info(format("%d images have been resized", getResizedImages()));
         log.info(format("There are %d completed images in the final container", destination.getAmountPresent()));
+    }
+
+    private long getImprovedImages() {
+        return source.getImages().stream().filter(i -> i.getImprovements() == 3).count() +
+                destination.getImages().stream().filter(i -> i.getImprovements() == 3).count();
+    }
+
+    private long getResizedImages() {
+        return source.getImagesOfSize(MEDIUM).size() + destination.getImagesOfSize(MEDIUM).size();
     }
 }
