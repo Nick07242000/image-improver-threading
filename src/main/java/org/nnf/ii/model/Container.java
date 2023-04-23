@@ -10,6 +10,7 @@ import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 import static org.nnf.ii.model.enums.Size.MEDIUM;
+import static org.nnf.ii.model.enums.Status.READY;
 import static org.nnf.ii.util.Util.getRandomNumber;
 
 @Getter
@@ -45,15 +46,15 @@ public class Container {
         return images.contains(image);
     }
 
-    public boolean isEmpty() {
-        return images.isEmpty();
-    };
-
     public boolean hasImproperSizedImages() {
         return images.stream().anyMatch(i -> i.getSize() != MEDIUM);
     }
 
     public List<Image> getImagesOfSize(Size size) {
         return images.stream().filter(i -> i.getSize() == size).collect(toList());
+    }
+
+    public boolean hasReadyImages() {
+        return images.stream().anyMatch(i -> i.getStatus() == READY);
     }
 }
