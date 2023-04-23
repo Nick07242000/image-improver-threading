@@ -12,8 +12,7 @@ import java.util.concurrent.CountDownLatch;
 import static java.lang.String.format;
 import static java.lang.Thread.currentThread;
 import static org.nnf.ii.model.enums.Size.MEDIUM;
-import static org.nnf.ii.model.enums.Status.FINISHED;
-import static org.nnf.ii.model.enums.Status.READY;
+import static org.nnf.ii.model.enums.Status.*;
 import static org.nnf.ii.util.Util.delay;
 import static org.nnf.ii.util.Util.waitFor;
 
@@ -26,23 +25,23 @@ public class Resizer implements Runnable {
 
     @Override
     public void run() {
-        log.info(format("Resizer Running - %s", currentThread().getName()));
+        log.debug(format("Resizer Running - %s", currentThread().getName()));
         waitFor(waiter);
         resizeCollection();
-        log.info(format("Resizer Finished - %s", currentThread().getName()));
+        log.debug(format("Resizer Finished - %s", currentThread().getName()));
     }
 
     private void resizeCollection() {
         while (container.hasImproperSizedImages()) {
             Image image = getImage();
 
-            log.info(format("Resizing image %s in %s", image.getUrl(), currentThread().getName()));
+            log.debug(format("Resizing image %s in %s", image.getUrl(), currentThread().getName()));
 
             delay(200);
 
             resize(image);
 
-            image.setStatus(FINISHED);
+            image.setStatus(READY);
         }
 
     }
