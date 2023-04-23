@@ -9,7 +9,6 @@ import org.nnf.ii.service.process.Resizer;
 import org.nnf.ii.service.semaphore.Queue;
 import org.nnf.ii.util.Inspector;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 

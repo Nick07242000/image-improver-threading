@@ -11,8 +11,8 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 import static java.lang.String.format;
-import static org.nnf.ii.util.Util.getRandomNumber;
 import static java.lang.Thread.currentThread;
+import static org.nnf.ii.util.Util.getRandomNumber;
 
 @Getter
 @Builder
