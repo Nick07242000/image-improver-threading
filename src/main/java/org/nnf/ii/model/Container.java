@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.nnf.ii.util.Util.getRandomNumber;
@@ -13,7 +14,7 @@ import static org.nnf.ii.util.Util.getRandomNumber;
 @Builder
 public class Container {
     private int size;
-    private List<Image> images;
+    private final List<Image> images = new ArrayList<>();
 
     public void add(Image image) {
         if (this.hasCapacity()) {

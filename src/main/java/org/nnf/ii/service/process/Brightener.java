@@ -27,9 +27,9 @@ public class Brightener implements Runnable {
 
     @Override
     public void run() {
-        log.info(format("Brightener Running - %s",currentThread().getName()));
+        log.debug(format("Brightener Running - %s",currentThread().getName()));
         brighten();
-        log.info(format("Brightener Finished - %s",currentThread().getName()));
+        log.debug(format("Brightener Finished - %s",currentThread().getName()));
     }
 
     private void brighten() {
@@ -37,7 +37,7 @@ public class Brightener implements Runnable {
 
         while (accessed.size() < container.getSize()) {
             Image image = getImage(accessed);
-            log.info(format("Brightening - %s image %s",Thread.currentThread().getName(), image.getUrl()));
+            log.debug(format("Brightening image %s in %s", image.getUrl(), currentThread().getName()));
             try {
                 sleep(getRandomNumber(0,100));
             } catch (InterruptedException e){
