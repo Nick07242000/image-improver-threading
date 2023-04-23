@@ -12,6 +12,7 @@ import java.util.concurrent.CountDownLatch;
 
 import static java.lang.String.format;
 import static java.lang.Thread.currentThread;
+import static org.nnf.ii.util.Util.delay;
 import static org.nnf.ii.util.Util.getRandomNumber;
 
 @Getter
@@ -26,6 +27,7 @@ public class Extractor implements Runnable {
     public void run() {
         log.debug(format("Extractor Running - %s",currentThread().getName()));
         while (destination.hasCapacity()) {
+            delay(50);
             addToDestination(extractFromSource());
             unlock();
         }
