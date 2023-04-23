@@ -2,6 +2,7 @@ package org.nnf.ii.service.process;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Synchronized;
 import org.apache.log4j.Logger;
 import org.nnf.ii.model.Container;
 import org.nnf.ii.model.Image;
@@ -50,7 +51,8 @@ public class Brightener implements Runnable {
         }
     }
 
-    private synchronized Image getImage(List<Image> accessedList) {
+    @Synchronized
+    private Image getImage(List<Image> accessedList) {
         Image image;
         do {
             image = queue.getImage(container);
@@ -72,7 +74,7 @@ public class Brightener implements Runnable {
         image.setImprovements(image.getImprovements() + 1);
     }
 
-    private synchronized void setStatusReady(Image image) {
+    private void setStatusReady(Image image) {
         image.setStatus(READY);
     }
 }

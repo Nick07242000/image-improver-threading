@@ -2,6 +2,7 @@ package org.nnf.ii.service.process;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Synchronized;
 import org.apache.log4j.Logger;
 import org.nnf.ii.model.Container;
 import org.nnf.ii.model.Image;
@@ -23,23 +24,23 @@ public class Extractor implements Runnable {
     public void run() {
         log.debug(format("Extractor Running - %s",currentThread().getName()));
         while (destination.hasCapacity()) {
-            extract();
+            addToDestination(extractFromSource());
         }
         log.debug(format("Extractor Finished - %s",currentThread().getName()));
         log.debug(format("Container has %d images",destination.getAmountPresent()));
     }
 
-    private void extract() {
+    private Image extractFromSource() {
         int n = getRandomNumber(0, source.size());
-        Image image = source.get(n);
-
         log.debug(format("Extracting image %d from source",n));
+        return source.get(n);
+    }
 
-        synchronized (this) {
-            if (!destination.isPresent(image)) {
-                log.debug(format("Image %d not present in source - adding",n));
-                destination.add(image);
-            }
+    @Synchronized
+    private void addToDestination(Image image) {
+        if (!destination.isPresent(image)) {
+            log.debug("Image %d not present in source - adding");
+            destination.add(image);
         }
     }
 }
