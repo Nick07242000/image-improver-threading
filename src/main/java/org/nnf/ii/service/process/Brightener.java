@@ -16,6 +16,7 @@ import static java.lang.Thread.sleep;
 import static org.nnf.ii.model.enums.Resolution.*;
 import static org.nnf.ii.model.enums.Status.IN_PROGRESS;
 import static org.nnf.ii.model.enums.Status.READY;
+import static org.nnf.ii.util.Util.getRandomNumber;
 
 @Getter
 @Builder
@@ -38,7 +39,7 @@ public class Brightener implements Runnable {
             Image image = getImage(accessed);
             log.info(format("Brightening - %s image %s",Thread.currentThread().getName(), image.getUrl()));
             try {
-                sleep(10);
+                sleep(getRandomNumber(0,100));
             } catch (InterruptedException e){
                 e.printStackTrace();
             }
