@@ -2,15 +2,17 @@ package org.nnf.ii.service.process;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Synchronized;
 import org.apache.log4j.Logger;
 import org.nnf.ii.model.Container;
 import org.nnf.ii.model.Image;
 
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 import static java.lang.String.format;
-import static org.nnf.ii.util.Util.getRandomNumber;
 import static java.lang.Thread.currentThread;
+import static org.nnf.ii.util.Util.getRandomNumber;
 
 @Getter
 @Builder
@@ -18,28 +20,34 @@ public class Extractor implements Runnable {
     private final Logger log = Logger.getLogger(Extractor.class);
     private final List<Image> source;
     private final Container destination;
+    private final CountDownLatch unlocker;
 
     @Override
     public void run() {
-        log.info(format("Extractor Running - %s",currentThread().getName()));
+        log.debug(format("Extractor Running - %s",currentThread().getName()));
         while (destination.hasCapacity()) {
-            extract();
+            addToDestination(extractFromSource());
+            unlock();
         }
-        log.info(format("Extractor Finished - %s",currentThread().getName()));
-        log.info(format("Container has %d images",destination.getAmountPresent()));
+        log.debug(format("Extractor Finished - %s",currentThread().getName()));
+        log.debug(format("Container has %d images",destination.getAmountPresent()));
     }
 
-    private void extract() {
+    private void unlock() {
+        unlocker.countDown();
+    }
+
+    private Image extractFromSource() {
         int n = getRandomNumber(0, source.size());
-        Image image = source.get(n);
+        log.debug(format("Extracting image %d from source",n));
+        return source.get(n);
+    }
 
-        log.info(format("Extracting image %d from source",n));
-
-        synchronized (this) {
-            if (!destination.isPresent(image)) {
-                log.info(format("Image %d not present in source - adding",n));
-                destination.add(image);
-            }
+    @Synchronized
+    private void addToDestination(Image image) {
+        if (!destination.isPresent(image)) {
+            log.debug("Image not present in source - adding");
+            destination.add(image);
         }
     }
 }

@@ -1,19 +1,27 @@
 package org.nnf.ii.service.semaphore;
 
 import lombok.NoArgsConstructor;
+import org.apache.log4j.Logger;
 import org.nnf.ii.model.Container;
 import org.nnf.ii.model.Image;
 
 import java.util.concurrent.Semaphore;
 
+import static org.nnf.ii.model.enums.Status.IN_PROGRESS;
+import static org.nnf.ii.model.enums.Status.READY;
+
 @NoArgsConstructor
 public class Queue {
+    private final Logger log = Logger.getLogger(Queue.class);
     private final Semaphore semaphore = new Semaphore(1);
 
     public Image getImage(Container container) {
         waitForAccess();
-        waitForData(container);
-        Image image = container.getRandom();
+        Image image;
+        do {
+           image = container.getRandom();
+        } while (image.getStatus() != READY);
+        image.setStatus(IN_PROGRESS);
         semaphore.release();
         return image;
     }
@@ -24,16 +32,10 @@ public class Queue {
     }
 
     private void waitForAccess() {
-        boolean locked = true;
-        while (locked) {
-            locked = !semaphore.tryAcquire();
-        }
-    }
-
-    private void waitForData(Container container) {
-        boolean isEmpty = container.isEmpty();
-        while (isEmpty) {
-            isEmpty = container.isEmpty();
+        try {
+            semaphore.acquire();
+        } catch (InterruptedException e) {
+            log.error(e.getMessage());
         }
     }
 
