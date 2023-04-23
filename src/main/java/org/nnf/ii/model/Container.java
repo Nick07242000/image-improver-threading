@@ -3,10 +3,14 @@ package org.nnf.ii.model;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.nnf.ii.model.enums.Size;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toList;
+import static org.nnf.ii.model.enums.Size.MEDIUM;
 import static org.nnf.ii.util.Util.getRandomNumber;
 
 @Getter
@@ -45,4 +49,12 @@ public class Container {
     public boolean isEmpty() {
         return images.isEmpty();
     };
+
+    public boolean hasImproperSizedImages() {
+        return images.stream().anyMatch(i -> i.getSize() != MEDIUM);
+    }
+
+    public List<Image> getImagesOfSize(Size size) {
+        return images.stream().filter(i -> i.getSize() == size).collect(toList());
+    }
 }
