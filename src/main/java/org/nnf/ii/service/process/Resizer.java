@@ -1,7 +1,6 @@
 package org.nnf.ii.service.process;
 
 import lombok.Builder;
-import lombok.Synchronized;
 import org.apache.log4j.Logger;
 import org.nnf.ii.model.Container;
 import org.nnf.ii.model.Image;

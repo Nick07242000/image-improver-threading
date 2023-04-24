@@ -1,7 +1,6 @@
 package org.nnf.ii.service.process;
 
 import lombok.Builder;
-import lombok.Synchronized;
 import org.apache.log4j.Logger;
 import org.nnf.ii.model.Container;
 import org.nnf.ii.model.Image;
@@ -12,7 +11,6 @@ import java.util.concurrent.CountDownLatch;
 import static java.lang.String.format;
 import static java.lang.Thread.currentThread;
 import static org.nnf.ii.model.enums.Size.MEDIUM;
-import static org.nnf.ii.model.enums.Status.FINISHED;
 import static org.nnf.ii.model.enums.Status.READY;
 import static org.nnf.ii.util.Util.delay;
 import static org.nnf.ii.util.Util.waitFor;
@@ -43,7 +41,7 @@ public class Persister implements Runnable {
                 destination.add(image);
                 queue.deleteImage(source, image);
 
-                delay(300);
+                delay(200);
 
                 image.setStatus(READY);
             }

@@ -8,11 +8,8 @@ import org.nnf.ii.model.Image;
 import org.nnf.ii.service.semaphore.Queue;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
-import java.util.stream.Stream;
 
 import static java.lang.String.format;
 import static java.lang.Thread.currentThread;
@@ -31,7 +28,7 @@ public class Brightener implements Runnable {
 
     @Override
     public void run() {
-        List<Image> accessed = Collections.synchronizedList(new ArrayList<>());
+        List<Image> accessed = new ArrayList<>();
         log.debug(format("Brightener Running - %s", currentThread().getName()));
         waitFor(waiter);
         brightenCollection(accessed);
@@ -49,7 +46,7 @@ public class Brightener implements Runnable {
             brighten(image);
             improve(image);
 
-            delay(100);
+            delay(200);
 
             image.setStatus(READY);
         }
@@ -60,7 +57,7 @@ public class Brightener implements Runnable {
         while (accessed.contains(image)) {
             image.setStatus(READY);
             image = queue.getImage(container);
-        };
+        }
         return image;
     }
 
@@ -74,6 +71,8 @@ public class Brightener implements Runnable {
                 break;
             case HIGH:
                 image.setResolution(ULTRA_HIGH);
+                break;
+            default:
                 break;
         }
     }

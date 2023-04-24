@@ -5,10 +5,11 @@ import org.apache.log4j.Logger;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static java.lang.Thread.currentThread;
 import static java.lang.Thread.sleep;
 
 public final class Util {
-    private final static Logger log = Logger.getLogger(Util.class);
+    private static final Logger log = Logger.getLogger(Util.class);
     private Util() {}
 
     public static int getRandomNumber(int min, int max) {
@@ -20,6 +21,7 @@ public final class Util {
             sleep(getRandomNumber(0,max));
         } catch (InterruptedException e){
             log.error(e.getMessage());
+            currentThread().interrupt();
         }
     }
 
@@ -28,6 +30,7 @@ public final class Util {
             countDownLatch.await();
         } catch (InterruptedException e) {
             log.error(e.getMessage());
+            currentThread().interrupt();
         }
     }
 }
