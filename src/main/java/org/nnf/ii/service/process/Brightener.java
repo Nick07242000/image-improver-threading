@@ -33,6 +33,7 @@ public class Brightener implements Runnable {
         waitFor(waiter);
         brightenCollection(accessed);
         log.debug(format("Brightener Finished - %s", currentThread().getName()));
+        log.info(format("%s improved %d images", currentThread().getName(), accessed.size()));
     }
 
     private void brightenCollection(List<Image> accessed) {
@@ -46,7 +47,7 @@ public class Brightener implements Runnable {
             brighten(image);
             improve(image);
 
-            delay(200);
+            delay(300);
 
             image.setStatus(READY);
         }
