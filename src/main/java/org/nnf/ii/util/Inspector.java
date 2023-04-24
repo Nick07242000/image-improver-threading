@@ -17,8 +17,8 @@ public class Inspector implements Runnable {
     @Override
     public void run() {
         while (destination.hasCapacity()) {
-            log();
             delay(500);
+            log();
         }
         log();
         log.info("Finished!");

@@ -2,7 +2,6 @@ package org.nnf.ii.service.process;
 
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Synchronized;
 import org.apache.log4j.Logger;
 import org.nnf.ii.model.Container;
 import org.nnf.ii.model.Image;
@@ -29,15 +28,14 @@ public class Brightener implements Runnable {
 
     @Override
     public void run() {
+        List<Image> accessed = new ArrayList<>();
         log.debug(format("Brightener Running - %s", currentThread().getName()));
         waitFor(waiter);
-        brightenCollection();
+        brightenCollection(accessed);
         log.debug(format("Brightener Finished - %s", currentThread().getName()));
     }
 
-    private void brightenCollection() {
-        List<Image> accessed = new ArrayList<>();
-
+    private void brightenCollection(List<Image> accessed) {
         while (accessed.size() < container.getSize()) {
             Image image = getImage(accessed);
 
@@ -45,21 +43,21 @@ public class Brightener implements Runnable {
 
             log.debug(format("Brightening image %s in %s", image.getUrl(), currentThread().getName()));
 
-            delay(100);
-
             brighten(image);
             improve(image);
+
+            delay(200);
+
             image.setStatus(READY);
         }
     }
 
-    @Synchronized
     private Image getImage(List<Image> accessed) {
         Image image = queue.getImage(container);
         while (accessed.contains(image)) {
             image.setStatus(READY);
             image = queue.getImage(container);
-        };
+        }
         return image;
     }
 
@@ -73,6 +71,8 @@ public class Brightener implements Runnable {
                 break;
             case HIGH:
                 image.setResolution(ULTRA_HIGH);
+                break;
+            default:
                 break;
         }
     }

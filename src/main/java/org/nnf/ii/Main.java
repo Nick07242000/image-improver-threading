@@ -33,7 +33,8 @@ public class Main {
         Inspector inspector = Inspector.builder().source(initialContainer).destination(finalContainer).build();
         startThreads(inspector,1);
 
-        Extractor extractor = Extractor.builder().source(images).destination(initialContainer).unlocker(collectionNotEmpty).build();
+        Integer added = 0;
+        Extractor extractor = Extractor.builder().source(images).destination(initialContainer).unlocker(collectionNotEmpty).added(added).build();
         startThreads(extractor,2);
 
         Queue queue = new Queue();

@@ -9,6 +9,7 @@ import java.util.concurrent.Semaphore;
 
 import static org.nnf.ii.model.enums.Status.IN_PROGRESS;
 import static org.nnf.ii.model.enums.Status.READY;
+import static java.lang.Thread.currentThread;
 
 @NoArgsConstructor
 public class Queue {
@@ -32,11 +33,26 @@ public class Queue {
         semaphore.release();
     }
 
+    public boolean hasReadyImages(Container container) {
+        waitForAccess();
+        boolean b = container.hasReadyImages();
+        semaphore.release();
+        return b;
+    }
+
+    public boolean hasImproperSizedImages(Container container) {
+        waitForAccess();
+        boolean b = container.hasImproperSizedImages();
+        semaphore.release();
+        return b;
+    }
+
     private void waitForAccess() {
         try {
             semaphore.acquire();
         } catch (InterruptedException e) {
             log.error(e.getMessage());
+            currentThread().interrupt();
         }
     }
 
