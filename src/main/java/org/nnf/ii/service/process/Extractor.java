@@ -29,7 +29,7 @@ public class Extractor implements Runnable {
         log.debug(format("Extractor Running - %s",currentThread().getName()));
         while (added < destination.getSize()) {
             addToDestination(extractFromSource());
-            delay(100);
+            delay(10);
             unlock();
         }
         log.debug(format("Extractor Finished - %s",currentThread().getName()));
