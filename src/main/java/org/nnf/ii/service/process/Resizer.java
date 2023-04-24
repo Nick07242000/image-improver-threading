@@ -32,14 +32,12 @@ public class Resizer implements Runnable {
     }
 
     private void resizeCollection() {
-        while (container.hasImproperSizedImages()) {
+        while (queue.hasImproperSizedImages(container)) {
             Image image = getImage();
 
-            log.debug(format("Resizing image %s in %s", image.getUrl(), currentThread().getName()));
+            resize(image);
 
             delay(200);
-
-            resize(image);
 
             image.setStatus(READY);
         }
@@ -47,10 +45,12 @@ public class Resizer implements Runnable {
     }
 
     private void resize(Image image) {
-        if(image.getSize() != MEDIUM) image.setSize(MEDIUM);
+        if(image.getSize() != MEDIUM) {
+            log.debug(format("Resizing image %s in %s", image.getUrl(), currentThread().getName()));
+            image.setSize(MEDIUM);
+        }
     }
 
-    @Synchronized
     private Image getImage() {
         Image image = queue.getImage(container);
         while (image.getImprovements() < 3) {

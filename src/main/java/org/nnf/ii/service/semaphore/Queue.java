@@ -32,6 +32,20 @@ public class Queue {
         semaphore.release();
     }
 
+    public boolean hasReadyImages(Container container) {
+        waitForAccess();
+        boolean b = container.hasReadyImages();
+        semaphore.release();
+        return b;
+    }
+
+    public boolean hasImproperSizedImages(Container container) {
+        waitForAccess();
+        boolean b = container.hasImproperSizedImages();
+        semaphore.release();
+        return b;
+    }
+
     private void waitForAccess() {
         try {
             semaphore.acquire();

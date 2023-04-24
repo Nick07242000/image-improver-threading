@@ -35,22 +35,22 @@ public class Persister implements Runnable {
 
     private void fillDestination() {
         while (destination.hasCapacity()) {
-            if (source.hasReadyImages()) {
+            if (queue.hasReadyImages(source)) {
                 Image image = getImage();
 
                 log.debug(format("Persisting - %s image in %s", image.getUrl(), currentThread().getName()));
 
-                delay(300);
-
                 destination.add(image);
                 queue.deleteImage(source, image);
-                image.setStatus(FINISHED);
+
+                delay(300);
+
+                image.setStatus(READY);
             }
         }
 
     }
 
-    @Synchronized
     private Image getImage() {
         Image image = queue.getImage(source);
         while (image.getSize() != MEDIUM) {
