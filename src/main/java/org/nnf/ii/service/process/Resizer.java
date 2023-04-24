@@ -36,7 +36,7 @@ public class Resizer implements Runnable {
 
             resize(image);
 
-            delay(200);
+            delay(300);
 
             image.setStatus(READY);
         }

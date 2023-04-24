@@ -23,6 +23,7 @@ import static org.nnf.ii.util.Util.waitFor;
 public class Brightener implements Runnable {
     private final Logger log = Logger.getLogger(Brightener.class);
     private final Container container;
+
     private final Queue queue;
     private final CountDownLatch waiter;
 
@@ -37,17 +38,22 @@ public class Brightener implements Runnable {
 
     private void brightenCollection(List<Image> accessed) {
         while (accessed.size() < container.getSize()) {
+            /*if(!container.hasImproperImprovImages()){
+                break;
+            }*/
             Image image = getImage(accessed);
-
             accessed.add(image);
 
             log.debug(format("Brightening image %s in %s", image.getUrl(), currentThread().getName()));
 
             brighten(image);
+            log.debug(format("Improvement before %s of %s", image.getImprovements(), currentThread().getName()));
+
             improve(image);
+            log.debug(format("Accessed size %s in %s", accessed.size(), currentThread().getName()));
 
             delay(200);
-
+            log.debug(format("Improvement after %s of %s", image.getImprovements(), currentThread().getName()));
             image.setStatus(READY);
         }
     }
@@ -78,6 +84,6 @@ public class Brightener implements Runnable {
     }
 
     private void improve(Image image) {
-        image.setImprovements(image.getImprovements() + 1);
+            image.setImprovements(image.getImprovements() + 1);
     }
 }

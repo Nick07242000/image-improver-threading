@@ -42,6 +42,7 @@ public class Container {
         return images.size() < size;
     }
 
+
     public boolean isPresent(Image image) {
         return images.contains(image);
     }

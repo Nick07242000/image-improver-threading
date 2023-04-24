@@ -25,10 +25,10 @@ public class Persister implements Runnable {
 
     @Override
     public void run() {
-        log.debug(format("Persister Running - %s", currentThread().getName()));
+        //log.debug(format("Persister Running - %s", currentThread().getName()));
         waitFor(waiter);
         fillDestination();
-        log.debug(format("Persister Finished - %s", currentThread().getName()));
+        //log.debug(format("Persister Finished - %s", currentThread().getName()));
     }
 
     private void fillDestination() {
@@ -41,7 +41,7 @@ public class Persister implements Runnable {
                 destination.add(image);
                 queue.deleteImage(source, image);
 
-                delay(200);
+                delay(400);
 
                 image.setStatus(READY);
             }
