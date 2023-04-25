@@ -31,6 +31,7 @@ public class Resizer implements Runnable {
         waitFor(waiter);
         resizeCollection(urls);
         log.debug(format("Resizer Finished - %s", currentThread().getName()));
+        log.info(format("%s resized %d images", currentThread().getName(), urls.size()));
     }
 
     private void resizeCollection(List<String> urls) {
