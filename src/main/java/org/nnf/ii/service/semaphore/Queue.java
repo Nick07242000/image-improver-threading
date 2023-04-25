@@ -7,9 +7,9 @@ import org.nnf.ii.model.Image;
 
 import java.util.concurrent.Semaphore;
 
+import static java.lang.Thread.currentThread;
 import static org.nnf.ii.model.enums.Status.IN_PROGRESS;
 import static org.nnf.ii.model.enums.Status.READY;
-import static java.lang.Thread.currentThread;
 
 @NoArgsConstructor
 public class Queue {

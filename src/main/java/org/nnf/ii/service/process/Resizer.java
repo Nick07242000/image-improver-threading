@@ -6,6 +6,8 @@ import org.nnf.ii.model.Container;
 import org.nnf.ii.model.Image;
 import org.nnf.ii.service.semaphore.Queue;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 import static java.lang.String.format;
@@ -25,16 +27,17 @@ public class Resizer implements Runnable {
     @Override
     public void run() {
         log.debug(format("Resizer Running - %s", currentThread().getName()));
+        List<String> urls = new ArrayList<>();
         waitFor(waiter);
-        resizeCollection();
+        resizeCollection(urls);
         log.debug(format("Resizer Finished - %s", currentThread().getName()));
     }
 
-    private void resizeCollection() {
+    private void resizeCollection(List<String> urls) {
         while (queue.hasImproperSizedImages(container)) {
             Image image = getImage();
 
-            resize(image);
+            resize(image,urls);
 
             delay(300);
 
@@ -43,10 +46,11 @@ public class Resizer implements Runnable {
 
     }
 
-    private void resize(Image image) {
+    private void resize(Image image, List<String> urls) {
         if(image.getSize() != MEDIUM) {
             log.debug(format("Resizing image %s in %s", image.getUrl(), currentThread().getName()));
             image.setSize(MEDIUM);
+            urls.add(image.getUrl());
         }
     }
 
