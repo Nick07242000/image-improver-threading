@@ -47,7 +47,7 @@ public class Persister implements Runnable {
                 destination.add(image);
                 queue.deleteImage(source, image);
 
-                delay(400);
+                delay(300);
 
                 image.setStatus(READY);
             }
