@@ -47,7 +47,7 @@ public class Brightener implements Runnable {
             brighten(image);
             improve(image);
 
-            delay(300);
+            delay(200);
 
             image.setStatus(READY);
         }
