@@ -2,17 +2,17 @@ package org.nnf.ii.service.process;
 
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Synchronized;
 import org.apache.log4j.Logger;
 import org.nnf.ii.model.Container;
 import org.nnf.ii.model.Image;
+import org.nnf.ii.service.semaphore.impl.InitialQueue;
 
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.lang.String.format;
 import static java.lang.Thread.currentThread;
-import static org.nnf.ii.util.Util.delay;
 import static org.nnf.ii.util.Util.getRandomNumber;
 
 @Getter
@@ -21,15 +21,16 @@ public class Extractor implements Runnable {
     private final Logger log = Logger.getLogger(Extractor.class);
     private final List<Image> source;
     private final Container destination;
+    private final InitialQueue initialQueue;
     private final CountDownLatch unlocker;
-    private Integer added;
+    private AtomicInteger extracted;
 
     @Override
     public void run() {
         log.debug(format("Extractor Running - %s",currentThread().getName()));
-        while (added < destination.getSize()) {
+        while (extracted.get() < destination.getSize()) {
             addToDestination(extractFromSource());
-            delay(30);
+            //delay(30);
             unlock();
         }
         log.debug(format("Extractor Finished - %s",currentThread().getName()));
@@ -46,12 +47,10 @@ public class Extractor implements Runnable {
         return source.get(n);
     }
 
-    @Synchronized
     private void addToDestination(Image image) {
-        if (!destination.isPresent(image)) {
-            log.debug("Image not present in source - adding");
-            destination.add(image);
-            added++;
+        log.debug("Attempting to add image to initial container");
+        if (initialQueue.addImage(destination,image)) {
+            extracted.getAndIncrement();
         }
     }
 }

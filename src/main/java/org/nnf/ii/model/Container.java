@@ -38,23 +38,24 @@ public class Container {
         return images.size();
     }
 
-    public boolean hasCapacity() {
-        return images.size() < size;
+    public List<Image> getImagesOfSize(Size size) {
+        return images.stream().filter(i -> i.getSize() == size).collect(toList());
     }
 
     public boolean isPresent(Image image) {
         return images.contains(image);
     }
 
-    public boolean hasImproperSizedImages() {
-        return images.stream().anyMatch(i -> i.getSize() != MEDIUM);
+    public boolean hasCapacity() {
+        return images.size() < size;
     }
 
-    public List<Image> getImagesOfSize(Size size) {
-        return images.stream().filter(i -> i.getSize() == size).collect(toList());
+    public boolean hasImproperSizedImages() {
+        return images.stream().anyMatch(i -> i.getSize() != MEDIUM);
     }
 
     public boolean hasReadyImages() {
         return images.stream().anyMatch(i -> i.getStatus() == READY);
     }
+
 }

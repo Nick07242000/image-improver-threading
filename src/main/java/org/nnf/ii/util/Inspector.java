@@ -43,7 +43,7 @@ public class Inspector implements Runnable {
                 destination.getImages().stream().filter(i -> i.getImprovements() == 3).count();
     }
 
-    private long getResizedImages() {
+    private int getResizedImages() {
         return source.getImagesOfSize(MEDIUM).size() + destination.getImagesOfSize(MEDIUM).size();
     }
 }
