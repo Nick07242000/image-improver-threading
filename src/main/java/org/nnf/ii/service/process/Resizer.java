@@ -38,7 +38,16 @@ public class Resizer implements Runnable {
 
     private void resizeCollection() {
         while (totalResized.get() < container.getSize()) {
-            Image image = getImage();
+            Optional<Image> optional = initialQueue.getImage();
+
+            if (!optional.isPresent()) continue;
+
+            Image image = optional.get();
+
+            if (isNotImprovable(image)) {
+                image.setStatus(READY);
+                continue;
+            }
 
             resize(image);
 
@@ -49,21 +58,14 @@ public class Resizer implements Runnable {
     }
 
     private void resize(Image image) {
-        if(image.getSize() != MEDIUM) {
-            log.debug(format("Resizing image %s in %s", image.getUrl(), currentThread().getName()));
-            image.setSize(MEDIUM);
-            totalResized.getAndIncrement();
-            threadResized.set(threadResized.get() + 1);
-        }
+        log.debug(format("Resizing image %s in %s", image.getUrl(), currentThread().getName()));
+        image.setSize(MEDIUM);
+        totalResized.getAndIncrement();
+        threadResized.set(threadResized.get() + 1);
     }
 
-    private Image getImage() {
-        Optional<Image> image = initialQueue.getImage();
-        while (!image.isPresent() || image.get().getImprovements() < 3) {
-            image.ifPresent(value -> value.setStatus(READY));
-            image = initialQueue.getImage();
-        }
-        return image.get();
+    private boolean isNotImprovable(Image image) {
+        return image.getImprovements() < 3 || image.getSize() == MEDIUM;
     }
 
 }

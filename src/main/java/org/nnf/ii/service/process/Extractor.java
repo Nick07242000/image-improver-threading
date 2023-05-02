@@ -8,6 +8,7 @@ import org.nnf.ii.model.Image;
 import org.nnf.ii.service.semaphore.Queue;
 
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -23,12 +24,13 @@ public class Extractor implements Runnable {
     private final Container destination;
     private final Queue initialQueue;
     private final CountDownLatch unlocker;
-    private AtomicInteger extracted;
+    private final Set<Image> extracted;
+    private AtomicInteger extractedAmount;
 
     @Override
     public void run() {
         log.debug(format("Extractor Running - %s",currentThread().getName()));
-        while (extracted.get() < destination.getSize()) {
+        while (extractedAmount.get() < destination.getSize()) {
             addToDestination(extractFromSource());
             //delay(30);
             unlock();
@@ -49,8 +51,10 @@ public class Extractor implements Runnable {
 
     private void addToDestination(Image image) {
         log.debug("Attempting to add image to initial container");
+        if (extracted.contains(image) || extractedAmount.get() == destination.getSize()) return;
         if (initialQueue.addImage(image)) {
-            extracted.getAndIncrement();
+            extractedAmount.getAndIncrement();
+            extracted.add(image);
         }
     }
 }

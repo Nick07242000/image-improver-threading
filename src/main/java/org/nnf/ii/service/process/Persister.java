@@ -43,8 +43,9 @@ public class Persister implements Runnable {
 
                 log.debug(format("Persisting - %s image in %s", image.getUrl(), currentThread().getName()));
 
-                destination.add(image);
-                initialQueue.deleteImage(image);
+                if (finalQueue.addImage(image)) {
+                    initialQueue.deleteImage(image);
+                }
 
                 //delay(300);
 

@@ -10,10 +10,13 @@ import org.nnf.ii.service.process.Resizer;
 import org.nnf.ii.service.semaphore.Queue;
 import org.nnf.ii.util.Inspector;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static java.util.Collections.synchronizedSet;
 import static org.nnf.ii.repository.ImageRepository.findAll;
 import static org.nnf.ii.util.ThreadFactory.startThreads;
 
@@ -40,13 +43,15 @@ public class Main {
         Queue initialQueue = Queue.builder().container(initialContainer).build();
         Queue finalQueue = Queue.builder().container(finalContainer).build();
 
-        AtomicInteger extracted = new AtomicInteger(0);
+        AtomicInteger extractedAmount = new AtomicInteger(0);
+        Set<Image> extracted = synchronizedSet(new HashSet<>());
         Extractor extractor = Extractor.builder()
                 .source(images)
                 .destination(initialContainer)
                 .initialQueue(initialQueue)
                 .unlocker(collectionNotEmpty)
                 .extracted(extracted)
+                .extractedAmount(extractedAmount)
                 .build();
         startThreads(extractor,2);
 
