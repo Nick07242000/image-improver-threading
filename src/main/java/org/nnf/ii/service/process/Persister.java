@@ -62,7 +62,7 @@ public class Persister implements Runnable {
 
     }
     
-    private isNotPersistable(Image image) {
+    private boolean isNotPersistable(Image image) {
         return image.getSize() != MEDIUM;
     }
 
