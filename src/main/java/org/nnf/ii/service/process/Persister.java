@@ -46,7 +46,10 @@ public class Persister implements Runnable {
                 
                 Image image = optional.get();
                 
-                if (isNotPersistable(image)) continue;
+                if (isNotPersistable(image)) {
+                    image.setStatus(READY);
+                    continue;
+                }
 
                 if (finalQueue.addImage(image)) {
                     log.debug(format("Persisting - %s image in %s", image.getUrl(), currentThread().getName()));
