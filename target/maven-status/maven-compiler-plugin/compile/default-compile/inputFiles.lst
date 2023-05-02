@@ -6,10 +6,12 @@ D:\College\Concurrente\image-improver-threading\src\main\java\org\nnf\ii\service
 D:\College\Concurrente\image-improver-threading\src\main\java\org\nnf\ii\model\Container.java
 D:\College\Concurrente\image-improver-threading\src\main\java\org\nnf\ii\util\ThreadFactory.java
 D:\College\Concurrente\image-improver-threading\src\main\java\org\nnf\ii\model\enums\Resolution.java
+D:\College\Concurrente\image-improver-threading\src\main\java\org\nnf\ii\service\semaphore\impl\FinalQueue.java
 D:\College\Concurrente\image-improver-threading\src\main\java\org\nnf\ii\model\Image.java
 D:\College\Concurrente\image-improver-threading\src\main\java\org\nnf\ii\service\process\Brightener.java
 D:\College\Concurrente\image-improver-threading\src\main\java\org\nnf\ii\Main.java
 D:\College\Concurrente\image-improver-threading\src\main\java\org\nnf\ii\util\Inspector.java
 D:\College\Concurrente\image-improver-threading\src\main\java\org\nnf\ii\service\process\Resizer.java
 D:\College\Concurrente\image-improver-threading\src\main\java\org\nnf\ii\service\semaphore\Queue.java
+D:\College\Concurrente\image-improver-threading\src\main\java\org\nnf\ii\service\semaphore\impl\InitialQueue.java
 D:\College\Concurrente\image-improver-threading\src\main\java\org\nnf\ii\util\Util.java

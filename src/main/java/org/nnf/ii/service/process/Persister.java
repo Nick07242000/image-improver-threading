@@ -4,11 +4,8 @@ import lombok.Builder;
 import org.apache.log4j.Logger;
 import org.nnf.ii.model.Container;
 import org.nnf.ii.model.Image;
-import org.nnf.ii.service.semaphore.impl.FinalQueue;
-import org.nnf.ii.service.semaphore.impl.InitialQueue;
+import org.nnf.ii.service.semaphore.Queue;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 
@@ -24,8 +21,8 @@ public class Persister implements Runnable {
     private final Logger log = Logger.getLogger(Persister.class);
     private final Container source;
     private final Container destination;
-    private final InitialQueue initialQueue;
-    private final FinalQueue finalQueue;
+    private final Queue initialQueue;
+    private final Queue finalQueue;
     private final CountDownLatch waiter;
     private final ThreadLocal<Integer> persisted = withInitial(() -> 0);
 
@@ -40,14 +37,14 @@ public class Persister implements Runnable {
     }
 
     private void fillDestination() {
-        while (finalQueue.hasCapacity(destination)) {
-            if (initialQueue.hasReadyImages(source)) {
+        while (finalQueue.hasCapacity()) {
+            if (initialQueue.hasReadyImages()) {
                 Image image = getImage();
 
                 log.debug(format("Persisting - %s image in %s", image.getUrl(), currentThread().getName()));
 
                 destination.add(image);
-                initialQueue.deleteImage(source, image);
+                initialQueue.deleteImage(image);
 
                 //delay(300);
 
@@ -58,10 +55,10 @@ public class Persister implements Runnable {
     }
 
     private Image getImage() {
-        Optional<Image> image = initialQueue.getImage(source);
+        Optional<Image> image = initialQueue.getImage();
         while (!image.isPresent() || image.get().getSize() != MEDIUM) {
             image.ifPresent(value -> value.setStatus(READY));
-            image = initialQueue.getImage(source);
+            image = initialQueue.getImage();
         }
         return image.get();
     }

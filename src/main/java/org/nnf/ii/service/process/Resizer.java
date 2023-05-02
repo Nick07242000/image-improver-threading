@@ -4,10 +4,8 @@ import lombok.Builder;
 import org.apache.log4j.Logger;
 import org.nnf.ii.model.Container;
 import org.nnf.ii.model.Image;
-import org.nnf.ii.service.semaphore.impl.InitialQueue;
+import org.nnf.ii.service.semaphore.Queue;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -23,7 +21,7 @@ import static org.nnf.ii.util.Util.waitFor;
 public class Resizer implements Runnable {
     private final Logger log = Logger.getLogger(Resizer.class);
     private final Container container;
-    private final InitialQueue initialQueue;
+    private final Queue initialQueue;
     private final CountDownLatch waiter;
     private final ThreadLocal<Integer> threadResized = withInitial(() -> 0);
     private AtomicInteger totalResized;
@@ -54,16 +52,16 @@ public class Resizer implements Runnable {
         if(image.getSize() != MEDIUM) {
             log.debug(format("Resizing image %s in %s", image.getUrl(), currentThread().getName()));
             image.setSize(MEDIUM);
-            totalResized.incrementAndGet();
+            totalResized.getAndIncrement();
             threadResized.set(threadResized.get() + 1);
         }
     }
 
     private Image getImage() {
-        Optional<Image> image = initialQueue.getImage(container);
+        Optional<Image> image = initialQueue.getImage();
         while (!image.isPresent() || image.get().getImprovements() < 3) {
             image.ifPresent(value -> value.setStatus(READY));
-            image = initialQueue.getImage(container);
+            image = initialQueue.getImage();
         }
         return image.get();
     }

@@ -5,7 +5,7 @@ import lombok.Getter;
 import org.apache.log4j.Logger;
 import org.nnf.ii.model.Container;
 import org.nnf.ii.model.Image;
-import org.nnf.ii.service.semaphore.impl.InitialQueue;
+import org.nnf.ii.service.semaphore.Queue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +24,7 @@ import static org.nnf.ii.util.Util.waitFor;
 public class Brightener implements Runnable {
     private final Logger log = Logger.getLogger(Brightener.class);
     private final Container container;
-    private final InitialQueue initialQueue;
+    private final Queue initialQueue;
     private final CountDownLatch waiter;
     private final ThreadLocal<List<Image>> accessed = withInitial(ArrayList::new);
 
@@ -32,16 +32,16 @@ public class Brightener implements Runnable {
     public void run() {
         log.debug(format("Brightener Running - %s", currentThread().getName()));
         waitFor(waiter);
-        brightenCollection(accessed.get());
+        brightenCollection();
         accessed.remove();
         log.debug(format("Brightener Finished - %s", currentThread().getName()));
     }
 
-    private void brightenCollection(List<Image> accessed) {
-        while (accessed.size() < container.getSize()) {
-            Image image = getImage(accessed);
+    private void brightenCollection() {
+        while (accessed.get().size() < container.getSize()) {
+            Image image = getImage();
 
-            accessed.add(image);
+            accessed.get().add(image);
 
             log.debug(format("Brightening image %s in %s", image.getUrl(), currentThread().getName()));
 
@@ -54,11 +54,11 @@ public class Brightener implements Runnable {
         }
     }
 
-    private Image getImage(List<Image> accessed) {
-        Optional<Image> image = initialQueue.getImage(container);
-        while (!image.isPresent() || accessed.contains(image.get())) {
+    private Image getImage() {
+        Optional<Image> image = initialQueue.getImage();
+        while (!image.isPresent() || accessed.get().contains(image.get())) {
             image.ifPresent(value -> value.setStatus(READY));
-            image = initialQueue.getImage(container);
+            image = initialQueue.getImage();
         }
         return image.get();
     }

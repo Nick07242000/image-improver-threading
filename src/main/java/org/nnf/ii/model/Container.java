@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
-import static org.nnf.ii.model.enums.Size.MEDIUM;
 import static org.nnf.ii.model.enums.Status.READY;
 import static org.nnf.ii.util.Util.getRandomNumber;
 
@@ -48,10 +47,6 @@ public class Container {
 
     public boolean hasCapacity() {
         return images.size() < size;
-    }
-
-    public boolean hasImproperSizedImages() {
-        return images.stream().anyMatch(i -> i.getSize() != MEDIUM);
     }
 
     public boolean hasReadyImages() {

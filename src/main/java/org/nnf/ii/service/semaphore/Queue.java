@@ -1,5 +1,6 @@
 package org.nnf.ii.service.semaphore;
 
+import lombok.Builder;
 import org.apache.log4j.Logger;
 import org.nnf.ii.model.Container;
 import org.nnf.ii.model.Image;
@@ -11,9 +12,11 @@ import static java.lang.Thread.currentThread;
 import static org.nnf.ii.model.enums.Status.IN_PROGRESS;
 import static org.nnf.ii.model.enums.Status.READY;
 
-public abstract class Queue {
-    protected final Logger log = Logger.getLogger(Queue.class);
-    protected final Semaphore semaphore = new Semaphore(1);
+@Builder
+public class Queue {
+    private final Logger log = Logger.getLogger(Queue.class);
+    private final Semaphore semaphore = new Semaphore(1);
+    private final Container container;
 
     protected void waitForAccess() {
         try {
@@ -24,7 +27,7 @@ public abstract class Queue {
         }
     }
 
-    public Optional<Image> getImage(Container container) {
+    public Optional<Image> getImage() {
         waitForAccess();
         if (!container.hasReadyImages()) {
             semaphore.release();
@@ -39,7 +42,7 @@ public abstract class Queue {
         return Optional.of(image);
     }
 
-    public boolean addImage(Container container, Image image) {
+    public boolean addImage(Image image) {
         waitForAccess();
         boolean b = false;
         if (!container.isPresent(image)) {
@@ -50,29 +53,22 @@ public abstract class Queue {
         return b;
     }
 
-    public void deleteImage(Container container, Image image) {
+    public void deleteImage(Image image) {
         waitForAccess();
         container.delete(image);
         semaphore.release();
     }
 
-    public boolean hasCapacity(Container container) {
+    public boolean hasCapacity() {
         waitForAccess();
         boolean b = container.hasCapacity();
         semaphore.release();
         return b;
     }
 
-    public boolean hasReadyImages(Container container) {
+    public boolean hasReadyImages() {
         waitForAccess();
         boolean b = container.hasReadyImages();
-        semaphore.release();
-        return b;
-    }
-
-    public boolean hasImproperSizedImages(Container container) {
-        waitForAccess();
-        boolean b = container.hasImproperSizedImages();
         semaphore.release();
         return b;
     }

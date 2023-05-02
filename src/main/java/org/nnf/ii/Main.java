@@ -7,8 +7,7 @@ import org.nnf.ii.service.process.Brightener;
 import org.nnf.ii.service.process.Extractor;
 import org.nnf.ii.service.process.Persister;
 import org.nnf.ii.service.process.Resizer;
-import org.nnf.ii.service.semaphore.impl.FinalQueue;
-import org.nnf.ii.service.semaphore.impl.InitialQueue;
+import org.nnf.ii.service.semaphore.Queue;
 import org.nnf.ii.util.Inspector;
 
 import java.util.List;
@@ -38,8 +37,8 @@ public class Main {
                 .build();
         startThreads(inspector,1);
 
-        InitialQueue initialQueue = new InitialQueue();
-        FinalQueue finalQueue = new FinalQueue();
+        Queue initialQueue = Queue.builder().container(initialContainer).build();
+        Queue finalQueue = Queue.builder().container(finalContainer).build();
 
         AtomicInteger extracted = new AtomicInteger(0);
         Extractor extractor = Extractor.builder()

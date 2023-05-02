@@ -5,7 +5,7 @@ import lombok.Getter;
 import org.apache.log4j.Logger;
 import org.nnf.ii.model.Container;
 import org.nnf.ii.model.Image;
-import org.nnf.ii.service.semaphore.impl.InitialQueue;
+import org.nnf.ii.service.semaphore.Queue;
 
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -21,7 +21,7 @@ public class Extractor implements Runnable {
     private final Logger log = Logger.getLogger(Extractor.class);
     private final List<Image> source;
     private final Container destination;
-    private final InitialQueue initialQueue;
+    private final Queue initialQueue;
     private final CountDownLatch unlocker;
     private AtomicInteger extracted;
 
@@ -49,7 +49,7 @@ public class Extractor implements Runnable {
 
     private void addToDestination(Image image) {
         log.debug("Attempting to add image to initial container");
-        if (initialQueue.addImage(destination,image)) {
+        if (initialQueue.addImage(image)) {
             extracted.getAndIncrement();
         }
     }
