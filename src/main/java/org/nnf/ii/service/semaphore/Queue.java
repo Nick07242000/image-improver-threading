@@ -44,11 +44,7 @@ public class Queue {
 
     public boolean addImage(Image image) {
         waitForAccess();
-        boolean b = false;
-        if (!container.isPresent(image)) {
-            container.add(image);
-            b = true;
-        }
+        boolean b = container.add(image);
         semaphore.release();
         return b;
     }
