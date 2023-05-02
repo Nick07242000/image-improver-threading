@@ -39,28 +39,26 @@ public class Persister implements Runnable {
 
     private void fillDestination() {
         while (finalQueue.hasCapacity()) {
-            if (initialQueue.hasReadyImages()) {
-                Optional<Image> optional = initialQueue.getImage();
+            Optional<Image> optional = initialQueue.getImage();
 
-                if (!optional.isPresent()) continue;
-                
-                Image image = optional.get();
-                
-                if (isNotPersistable(image)) {
-                    image.setStatus(READY);
-                    continue;
-                }
+            if (!optional.isPresent()) continue;
 
-                if (finalQueue.addImage(image)) {
-                    log.debug(format("Persisting - %s image in %s", image.getUrl(), currentThread().getName()));
-                    initialQueue.deleteImage(image);
-                    persisted.set(persisted.get() + 1);
-                }
+            Image image = optional.get();
 
-                delay(300);
-
+            if (isNotPersistable(image)) {
                 image.setStatus(READY);
+                continue;
             }
+
+            if (finalQueue.addImage(image)) {
+                log.debug(format("Persisting - %s image in %s", image.getUrl(), currentThread().getName()));
+                initialQueue.deleteImage(image);
+                persisted.set(persisted.get() + 1);
+            }
+
+            delay(300);
+
+            image.setStatus(READY);
         }
 
     }
