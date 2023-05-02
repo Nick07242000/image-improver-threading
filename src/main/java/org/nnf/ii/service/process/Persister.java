@@ -14,6 +14,7 @@ import static java.lang.Thread.currentThread;
 import static java.lang.ThreadLocal.withInitial;
 import static org.nnf.ii.model.enums.Size.MEDIUM;
 import static org.nnf.ii.model.enums.Status.READY;
+import static org.nnf.ii.util.Util.delay;
 import static org.nnf.ii.util.Util.waitFor;
 
 @Builder
@@ -45,9 +46,10 @@ public class Persister implements Runnable {
 
                 if (finalQueue.addImage(image)) {
                     initialQueue.deleteImage(image);
+                    persisted.set(persisted.get() + 1);
                 }
 
-                //delay(300);
+                delay(300);
 
                 image.setStatus(READY);
             }

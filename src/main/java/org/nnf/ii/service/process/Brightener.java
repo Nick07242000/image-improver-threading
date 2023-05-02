@@ -17,6 +17,7 @@ import static java.lang.Thread.currentThread;
 import static java.lang.ThreadLocal.withInitial;
 import static org.nnf.ii.model.enums.Resolution.*;
 import static org.nnf.ii.model.enums.Status.READY;
+import static org.nnf.ii.util.Util.delay;
 import static org.nnf.ii.util.Util.waitFor;
 
 @Getter
@@ -48,7 +49,7 @@ public class Brightener implements Runnable {
             brighten(image);
             improve(image);
 
-            //delay(200);
+            delay(200);
 
             image.setStatus(READY);
         }

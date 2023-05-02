@@ -14,6 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.lang.String.format;
 import static java.lang.Thread.currentThread;
+import static org.nnf.ii.util.Util.delay;
 import static org.nnf.ii.util.Util.getRandomNumber;
 
 @Getter
@@ -32,7 +33,7 @@ public class Extractor implements Runnable {
         log.debug(format("Extractor Running - %s",currentThread().getName()));
         while (extractedAmount.get() < destination.getSize()) {
             addToDestination(extractFromSource());
-            //delay(30);
+            delay(30);
             unlock();
         }
         log.debug(format("Extractor Finished - %s",currentThread().getName()));
