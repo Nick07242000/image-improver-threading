@@ -19,10 +19,12 @@ public class Container {
     private int size;
     private final List<Image> images = new ArrayList<>();
 
-    public void add(Image image) {
-        if (this.hasCapacity()) {
+    public boolean add(Image image) {
+        if (this.hasCapacity() && !this.isPresent(image)) {
             images.add(image);
+            return true;
         }
+        return false;
     }
 
     public void delete(Image image){
