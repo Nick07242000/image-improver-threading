@@ -1,7 +1,6 @@
 package org.nnf.ii.service.process;
 
 import lombok.Builder;
-import lombok.Getter;
 import org.apache.log4j.Logger;
 import org.nnf.ii.model.Container;
 import org.nnf.ii.model.Image;
@@ -20,7 +19,6 @@ import static org.nnf.ii.model.enums.Status.READY;
 import static org.nnf.ii.util.Util.delay;
 import static org.nnf.ii.util.Util.waitFor;
 
-@Getter
 @Builder
 public class Brightener implements Runnable {
     private final Logger log = Logger.getLogger(Brightener.class);
