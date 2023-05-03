@@ -1,7 +1,6 @@
 package org.nnf.ii.service.process;
 
 import lombok.Builder;
-import lombok.Getter;
 import org.apache.log4j.Logger;
 import org.nnf.ii.model.Container;
 import org.nnf.ii.model.Image;
@@ -17,7 +16,6 @@ import static java.lang.Thread.currentThread;
 import static org.nnf.ii.util.Util.delay;
 import static org.nnf.ii.util.Util.getRandomNumber;
 
-@Getter
 @Builder
 public class Extractor implements Runnable {
     private final Logger log = Logger.getLogger(Extractor.class);
