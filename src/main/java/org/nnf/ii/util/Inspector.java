@@ -8,7 +8,6 @@ import static java.lang.Integer.parseInt;
 import static java.lang.String.format;
 import static java.lang.Thread.getAllStackTraces;
 import static java.util.Comparator.comparing;
-import static org.nnf.ii.model.enums.Size.MEDIUM;
 import static org.nnf.ii.util.Util.delay;
 
 @Builder
@@ -32,18 +31,21 @@ public class Inspector implements Runnable {
         log.info(format("%d images have been improved", getImprovedImages()));
         log.info(format("%d images have been resized", getResizedImages()));
         log.info(format("There are %d completed images in the final container", destination.getAmountPresent()));
+        logThreads();
+    }
+
+    private long getImprovedImages() {
+        return source.countImprovedImages() + destination.countImprovedImages();
+    }
+
+    private long getResizedImages() {
+        return source.countResizedImages() + destination.countResizedImages();
+    }
+
+    private void logThreads() {
         getAllStackTraces().keySet().stream()
                 .filter(thread -> thread.getName().contains("Thread-"))
                 .sorted(comparing(t -> parseInt(t.getName().split("-")[1])))
                 .forEach(thread -> log.info(format("%s - %s", thread.getName(), thread.getState())));
-    }
-
-    private long getImprovedImages() {
-        return source.getImages().stream().filter(i -> i.getImprovements() == 3).count() +
-                destination.getImages().stream().filter(i -> i.getImprovements() == 3).count();
-    }
-
-    private int getResizedImages() {
-        return source.getImagesOfSize(MEDIUM).size() + destination.getImagesOfSize(MEDIUM).size();
     }
 }

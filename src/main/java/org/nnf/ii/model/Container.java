@@ -3,22 +3,24 @@ package org.nnf.ii.model;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import org.nnf.ii.model.enums.Size;
+import lombok.Synchronized;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-import static java.util.stream.Collectors.toList;
+import static org.nnf.ii.model.enums.Size.MEDIUM;
+import static org.nnf.ii.model.enums.Status.IN_PROGRESS;
 import static org.nnf.ii.model.enums.Status.READY;
-import static org.nnf.ii.util.Util.getRandomNumber;
 
-@Getter
+@Getter(onMethod_=@Synchronized)
 @Setter
 @Builder
 public class Container {
     private int size;
     private final List<Image> images = new ArrayList<>();
 
+    @Synchronized
     public boolean add(Image image) {
         if (this.hasCapacity() && !this.isPresent(image)) {
             images.add(image);
@@ -27,32 +29,44 @@ public class Container {
         return false;
     }
 
+    @Synchronized
     public void delete(Image image){
         images.remove(image);
     }
 
-    public Image getRandom() {
-        return images.get(getRandomNumber(0, images.size()));
+    @Synchronized
+    public Optional<Image> getRandom() {
+        Optional<Image> image = images.stream()
+                .filter(i -> i.getStatus() == READY)
+                .findAny();
+
+        image.ifPresent(i -> i.setStatus(IN_PROGRESS));
+
+        return image;
     }
 
+    @Synchronized
     public int getAmountPresent() {
         return images.size();
     }
 
-    public List<Image> getImagesOfSize(Size size) {
-        return images.stream().filter(i -> i.getSize() == size).collect(toList());
-    }
-
+    @Synchronized
     public boolean isPresent(Image image) {
         return images.contains(image);
     }
 
+    @Synchronized
     public boolean hasCapacity() {
         return images.size() < size;
     }
 
-    public boolean hasReadyImages() {
-        return images.stream().anyMatch(i -> i.getStatus() == READY);
+    @Synchronized
+    public long countImprovedImages() {
+        return images.stream().filter(i -> i.getImprovements() == 3).count();
     }
 
+    @Synchronized
+    public long countResizedImages() {
+        return images.stream().filter(i -> i.getSize() == MEDIUM).count();
+    }
 }

@@ -7,7 +7,6 @@ import org.nnf.ii.service.process.Brightener;
 import org.nnf.ii.service.process.Extractor;
 import org.nnf.ii.service.process.Persister;
 import org.nnf.ii.service.process.Resizer;
-import org.nnf.ii.service.semaphore.Queue;
 import org.nnf.ii.util.Inspector;
 
 import java.util.HashSet;
@@ -40,15 +39,11 @@ public class Main {
                 .build();
         startThreads(inspector,1);
 
-        Queue initialQueue = Queue.builder().container(initialContainer).build();
-        Queue finalQueue = Queue.builder().container(finalContainer).build();
-
         AtomicInteger extractedAmount = new AtomicInteger(0);
         Set<Image> extracted = synchronizedSet(new HashSet<>());
         Extractor extractor = Extractor.builder()
                 .source(images)
                 .destination(initialContainer)
-                .initialQueue(initialQueue)
                 .unlocker(collectionNotEmpty)
                 .extracted(extracted)
                 .extractedAmount(extractedAmount)
@@ -57,7 +52,6 @@ public class Main {
 
         Brightener brightener = Brightener.builder()
                 .container(initialContainer)
-                .initialQueue(initialQueue)
                 .waiter(collectionNotEmpty)
                 .build();
         startThreads(brightener, 3);
@@ -65,7 +59,6 @@ public class Main {
         AtomicInteger resized = new AtomicInteger(0);
         Resizer resizer = Resizer.builder()
                 .container(initialContainer)
-                .initialQueue(initialQueue)
                 .totalResized(resized)
                 .waiter(collectionNotEmpty)
                 .build();
@@ -74,8 +67,6 @@ public class Main {
         Persister persister = Persister.builder()
                 .source(initialContainer)
                 .destination(finalContainer)
-                .initialQueue(initialQueue)
-                .finalQueue(finalQueue)
                 .waiter(collectionNotEmpty)
                 .build();
         startThreads(persister, 2);

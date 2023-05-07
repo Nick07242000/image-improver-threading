@@ -4,7 +4,6 @@ import lombok.Builder;
 import org.apache.log4j.Logger;
 import org.nnf.ii.model.Container;
 import org.nnf.ii.model.Image;
-import org.nnf.ii.service.semaphore.Queue;
 
 import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
@@ -22,7 +21,6 @@ import static org.nnf.ii.util.Util.waitFor;
 public class Resizer implements Runnable {
     private final Logger log = Logger.getLogger(Resizer.class);
     private final Container container;
-    private final Queue initialQueue;
     private final CountDownLatch waiter;
     private final ThreadLocal<Integer> threadResized = withInitial(() -> 0);
     private AtomicInteger totalResized;
@@ -39,16 +37,14 @@ public class Resizer implements Runnable {
 
     private void resizeCollection() {
         while (totalResized.get() < container.getSize()) {
-            Optional<Image> optional = initialQueue.getImage();
+            Optional<Image> optional = container.getRandom();
 
-            if (!optional.isPresent()) continue;
-
-            Image image = optional.get();
-
-            if (isNotImprovable(image)) {
-                image.setStatus(READY);
+            if (!optional.isPresent() || isNotImprovable(optional.get())) {
+                optional.ifPresent(image -> image.setStatus(READY));
                 continue;
             }
+
+            Image image = optional.get();
 
             resize(image);
 
@@ -58,15 +54,15 @@ public class Resizer implements Runnable {
         }
     }
 
+    private boolean isNotImprovable(Image image) {
+        return image.getImprovements() < 3 || image.getSize() == MEDIUM;
+    }
+
     private void resize(Image image) {
         log.debug(format("Resizing image %s in %s", image.getUrl(), currentThread().getName()));
         image.setSize(MEDIUM);
         totalResized.getAndIncrement();
         threadResized.set(threadResized.get() + 1);
-    }
-
-    private boolean isNotImprovable(Image image) {
-        return image.getImprovements() < 3 || image.getSize() == MEDIUM;
     }
 
 }
