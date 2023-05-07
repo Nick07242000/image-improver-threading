@@ -6,7 +6,6 @@ import org.nnf.ii.model.Container;
 import org.nnf.ii.model.Image;
 
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -21,7 +20,6 @@ public class Extractor implements Runnable {
     private final List<Image> source;
     private final Container destination;
     private final CountDownLatch unlocker;
-    private final Set<Image> extracted;
     private AtomicInteger extractedAmount;
 
     @Override
@@ -48,10 +46,7 @@ public class Extractor implements Runnable {
 
     private void addToDestination(Image image) {
         log.debug("Attempting to add image to initial container");
-        if (extracted.contains(image) || extractedAmount.get() == destination.getSize()) return;
-        if (destination.add(image)) {
-            extractedAmount.getAndIncrement();
-            extracted.add(image);
-        }
+        if (extractedAmount.get() == destination.getSize()) return;
+        if (destination.add(image)) extractedAmount.getAndIncrement();
     }
 }

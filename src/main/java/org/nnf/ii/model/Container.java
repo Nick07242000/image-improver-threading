@@ -5,9 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.Synchronized;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.nnf.ii.model.enums.Size.MEDIUM;
 import static org.nnf.ii.model.enums.Status.IN_PROGRESS;
@@ -18,12 +16,14 @@ import static org.nnf.ii.model.enums.Status.READY;
 @Builder
 public class Container {
     private int size;
+    private final Set<Image> imageRecord = new HashSet<>();
     private final List<Image> images = new ArrayList<>();
 
     @Synchronized
     public boolean add(Image image) {
-        if (this.hasCapacity() && !this.isPresent(image)) {
+        if (this.hasCapacity() && !this.isPresent(image) && !imageRecord.contains(image)) {
             images.add(image);
+            imageRecord.add(image);
             return true;
         }
         return false;
