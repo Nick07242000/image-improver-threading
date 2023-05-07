@@ -1,53 +1,24 @@
 package org.nnf.ii.service.semaphore;
 
-import lombok.NoArgsConstructor;
+import lombok.Builder;
 import org.apache.log4j.Logger;
 import org.nnf.ii.model.Container;
 import org.nnf.ii.model.Image;
 
+import java.util.Optional;
 import java.util.concurrent.Semaphore;
 
 import static java.lang.Thread.currentThread;
 import static org.nnf.ii.model.enums.Status.IN_PROGRESS;
 import static org.nnf.ii.model.enums.Status.READY;
 
-@NoArgsConstructor
+@Builder
 public class Queue {
     private final Logger log = Logger.getLogger(Queue.class);
     private final Semaphore semaphore = new Semaphore(1);
+    private final Container container;
 
-    public Image getImage(Container container) {
-        waitForAccess();
-        Image image;
-        do {
-           image = container.getRandom();
-        } while (image.getStatus() != READY);
-        image.setStatus(IN_PROGRESS);
-        semaphore.release();
-        return image;
-    }
-
-    public void deleteImage(Container container, Image image) {
-        waitForAccess();
-        container.delete(image);
-        semaphore.release();
-    }
-
-    public boolean hasReadyImages(Container container) {
-        waitForAccess();
-        boolean b = container.hasReadyImages();
-        semaphore.release();
-        return b;
-    }
-
-    public boolean hasImproperSizedImages(Container container) {
-        waitForAccess();
-        boolean b = container.hasImproperSizedImages();
-        semaphore.release();
-        return b;
-    }
-
-    private void waitForAccess() {
+    protected void waitForAccess() {
         try {
             semaphore.acquire();
         } catch (InterruptedException e) {
@@ -56,4 +27,45 @@ public class Queue {
         }
     }
 
+    public Optional<Image> getImage() {
+        waitForAccess();
+        if (!container.hasReadyImages()) {
+            semaphore.release();
+            return Optional.empty();
+        }
+        Image image;
+        do {
+            image = container.getRandom();
+        } while (image.getStatus() != READY);
+        image.setStatus(IN_PROGRESS);
+        semaphore.release();
+        return Optional.of(image);
+    }
+
+    public boolean addImage(Image image) {
+        waitForAccess();
+        boolean b = container.add(image);
+        semaphore.release();
+        return b;
+    }
+
+    public void deleteImage(Image image) {
+        waitForAccess();
+        container.delete(image);
+        semaphore.release();
+    }
+
+    public boolean hasCapacity() {
+        waitForAccess();
+        boolean b = container.hasCapacity();
+        semaphore.release();
+        return b;
+    }
+
+    public boolean hasReadyImages() {
+        waitForAccess();
+        boolean b = container.hasReadyImages();
+        semaphore.release();
+        return b;
+    }
 }

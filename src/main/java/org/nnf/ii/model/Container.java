@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
-import static org.nnf.ii.model.enums.Size.MEDIUM;
 import static org.nnf.ii.model.enums.Status.READY;
 import static org.nnf.ii.util.Util.getRandomNumber;
 
@@ -20,10 +19,12 @@ public class Container {
     private int size;
     private final List<Image> images = new ArrayList<>();
 
-    public void add(Image image) {
-        if (this.hasCapacity()) {
+    public boolean add(Image image) {
+        if (this.hasCapacity() && !this.isPresent(image)) {
             images.add(image);
+            return true;
         }
+        return false;
     }
 
     public void delete(Image image){
@@ -38,23 +39,20 @@ public class Container {
         return images.size();
     }
 
-    public boolean hasCapacity() {
-        return images.size() < size;
+    public List<Image> getImagesOfSize(Size size) {
+        return images.stream().filter(i -> i.getSize() == size).collect(toList());
     }
 
     public boolean isPresent(Image image) {
         return images.contains(image);
     }
 
-    public boolean hasImproperSizedImages() {
-        return images.stream().anyMatch(i -> i.getSize() != MEDIUM);
-    }
-
-    public List<Image> getImagesOfSize(Size size) {
-        return images.stream().filter(i -> i.getSize() == size).collect(toList());
+    public boolean hasCapacity() {
+        return images.size() < size;
     }
 
     public boolean hasReadyImages() {
         return images.stream().anyMatch(i -> i.getStatus() == READY);
     }
+
 }

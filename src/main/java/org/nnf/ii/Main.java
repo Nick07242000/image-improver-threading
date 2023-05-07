@@ -10,9 +10,13 @@ import org.nnf.ii.service.process.Resizer;
 import org.nnf.ii.service.semaphore.Queue;
 import org.nnf.ii.util.Inspector;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import static java.util.Collections.synchronizedSet;
 import static org.nnf.ii.repository.ImageRepository.findAll;
 import static org.nnf.ii.util.ThreadFactory.startThreads;
 
@@ -30,22 +34,50 @@ public class Main {
 
         CountDownLatch collectionNotEmpty = new CountDownLatch(1);
 
-        Inspector inspector = Inspector.builder().source(initialContainer).destination(finalContainer).build();
+        Inspector inspector = Inspector.builder()
+                .source(initialContainer)
+                .destination(finalContainer)
+                .build();
         startThreads(inspector,1);
 
-        Integer added = 0;
-        Extractor extractor = Extractor.builder().source(images).destination(initialContainer).unlocker(collectionNotEmpty).added(added).build();
+        Queue initialQueue = Queue.builder().container(initialContainer).build();
+        Queue finalQueue = Queue.builder().container(finalContainer).build();
+
+        AtomicInteger extractedAmount = new AtomicInteger(0);
+        Set<Image> extracted = synchronizedSet(new HashSet<>());
+        Extractor extractor = Extractor.builder()
+                .source(images)
+                .destination(initialContainer)
+                .initialQueue(initialQueue)
+                .unlocker(collectionNotEmpty)
+                .extracted(extracted)
+                .extractedAmount(extractedAmount)
+                .build();
         startThreads(extractor,2);
 
-        Queue queue = new Queue();
-
-        Brightener brightener = Brightener.builder().container(initialContainer).queue(queue).waiter(collectionNotEmpty).build();
+        Brightener brightener = Brightener.builder()
+                .container(initialContainer)
+                .initialQueue(initialQueue)
+                .waiter(collectionNotEmpty)
+                .build();
         startThreads(brightener, 3);
 
-        Resizer resizer = Resizer.builder().container(initialContainer).queue(queue).waiter(collectionNotEmpty).build();
+        AtomicInteger resized = new AtomicInteger(0);
+        Resizer resizer = Resizer.builder()
+                .container(initialContainer)
+                .initialQueue(initialQueue)
+                .totalResized(resized)
+                .waiter(collectionNotEmpty)
+                .build();
         startThreads(resizer, 3);
 
-        Persister persister = Persister.builder().source(initialContainer).destination(finalContainer).queue(queue).waiter(collectionNotEmpty).build();
+        Persister persister = Persister.builder()
+                .source(initialContainer)
+                .destination(finalContainer)
+                .initialQueue(initialQueue)
+                .finalQueue(finalQueue)
+                .waiter(collectionNotEmpty)
+                .build();
         startThreads(persister, 2);
 
     }

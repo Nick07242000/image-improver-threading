@@ -6,12 +6,12 @@ import org.nnf.ii.model.Container;
 import org.nnf.ii.model.Image;
 import org.nnf.ii.service.semaphore.Queue;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 
 import static java.lang.String.format;
 import static java.lang.Thread.currentThread;
+import static java.lang.ThreadLocal.withInitial;
 import static org.nnf.ii.model.enums.Size.MEDIUM;
 import static org.nnf.ii.model.enums.Status.READY;
 import static org.nnf.ii.util.Util.delay;
@@ -22,46 +22,49 @@ public class Persister implements Runnable {
     private final Logger log = Logger.getLogger(Persister.class);
     private final Container source;
     private final Container destination;
-    private final Queue queue;
+    private final Queue initialQueue;
+    private final Queue finalQueue;
     private final CountDownLatch waiter;
+    private final ThreadLocal<Integer> persisted = withInitial(() -> 0);
 
     @Override
     public void run() {
         log.debug(format("Persister Running - %s", currentThread().getName()));
-        List<String> urls = new ArrayList<>();
         waitFor(waiter);
-        fillDestination(urls);
+        fillDestination();
         log.debug(format("Persister Finished - %s", currentThread().getName()));
-        log.info(format("%s moved %d images", currentThread().getName(), urls.size()));
+        log.info(format("%s moved %d images", currentThread().getName(), persisted.get()));
+        persisted.remove();
     }
 
-    private void fillDestination(List<String> urls) {
-        while (destination.hasCapacity()) {
-            if (queue.hasReadyImages(source)) {
-                Image image = getImage();
+    private void fillDestination() {
+        while (finalQueue.hasCapacity()) {
+            Optional<Image> optional = initialQueue.getImage();
 
-                urls.add(image.getUrl());
+            if (!optional.isPresent()) continue;
 
-                log.debug(format("Persisting - %s image in %s", image.getUrl(), currentThread().getName()));
+            Image image = optional.get();
 
-                destination.add(image);
-                queue.deleteImage(source, image);
-
-                delay(300);
-
+            if (isNotPersistable(image)) {
                 image.setStatus(READY);
+                continue;
             }
+
+            if (finalQueue.addImage(image)) {
+                log.debug(format("Persisting - %s image in %s", image.getUrl(), currentThread().getName()));
+                initialQueue.deleteImage(image);
+                persisted.set(persisted.get() + 1);
+            }
+
+            delay(300);
+
+            image.setStatus(READY);
         }
 
     }
-
-    private Image getImage() {
-        Image image = queue.getImage(source);
-        while (image.getSize() != MEDIUM) {
-            image.setStatus(READY);
-            image = queue.getImage(source);
-        }
-        return image;
+    
+    private boolean isNotPersistable(Image image) {
+        return image.getSize() != MEDIUM;
     }
 
 }
