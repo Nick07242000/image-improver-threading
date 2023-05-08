@@ -20,13 +20,15 @@ public class Inspector implements Runnable {
     public void run() {
         while (destination.hasCapacity()) {
             delay(500);
-            log();
+            logContainers();
+            logThreads();
         }
-        log();
+        logContainers();
+        logThreads();
         log.info("Finished!");
     }
 
-    private void log() {
+    private void logContainers() {
         log.info(format("There are %d images in the initial container", source.getAmountPresent()));
         log.info(format("%d images have been improved", getImprovedImages()));
         log.info(format("%d images have been resized", getResizedImages()));
