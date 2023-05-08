@@ -36,12 +36,12 @@ public class Main {
                 .build();
         startThreads(inspector,1);
 
-        AtomicInteger extractedAmount = new AtomicInteger(0);
+        AtomicInteger extracted = new AtomicInteger(0);
         Extractor extractor = Extractor.builder()
                 .source(images)
                 .destination(initialContainer)
                 .unlocker(collectionNotEmpty)
-                .extractedAmount(extractedAmount)
+                .extracted(extracted)
                 .build();
         startThreads(extractor,2);
 

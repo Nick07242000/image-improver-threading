@@ -20,12 +20,12 @@ public class Extractor implements Runnable {
     private final List<Image> source;
     private final Container destination;
     private final CountDownLatch unlocker;
-    private AtomicInteger extractedAmount;
+    private AtomicInteger extracted;
 
     @Override
     public void run() {
         log.debug(format("Extractor Running - %s",currentThread().getName()));
-        while (extractedAmount.get() < destination.getSize()) {
+        while (extracted.get() < destination.getSize()) {
             addToDestination(extractFromSource());
             delay(30);
             unlock();
@@ -46,7 +46,7 @@ public class Extractor implements Runnable {
 
     private void addToDestination(Image image) {
         log.debug("Attempting to add image to initial container");
-        if (extractedAmount.get() == destination.getSize()) return;
-        if (destination.add(image)) extractedAmount.getAndIncrement();
+        if (extracted.get() == destination.getSize()) return;
+        if (destination.add(image)) extracted.getAndIncrement();
     }
 }
