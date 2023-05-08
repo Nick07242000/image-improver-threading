@@ -1,4 +1,4 @@
-package org.nnf.ii.service.process;
+package org.nnf.ii.service;
 
 import lombok.Builder;
 import org.apache.log4j.Logger;

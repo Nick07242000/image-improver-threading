@@ -3,10 +3,10 @@ package org.nnf.ii;
 import org.apache.log4j.Logger;
 import org.nnf.ii.model.Container;
 import org.nnf.ii.model.Image;
-import org.nnf.ii.service.process.Brightener;
-import org.nnf.ii.service.process.Extractor;
-import org.nnf.ii.service.process.Persister;
-import org.nnf.ii.service.process.Resizer;
+import org.nnf.ii.service.Brightener;
+import org.nnf.ii.service.Extractor;
+import org.nnf.ii.service.Persister;
+import org.nnf.ii.service.Resizer;
 import org.nnf.ii.util.Inspector;
 
 import java.util.List;
