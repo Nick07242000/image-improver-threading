@@ -33,7 +33,6 @@ public class Inspector implements Runnable {
         log.info(format("%d images have been improved", getImprovedImages()));
         log.info(format("%d images have been resized", getResizedImages()));
         log.info(format("There are %d completed images in the final container", destination.getAmountPresent()));
-        logThreads();
     }
 
     private long getImprovedImages() {
